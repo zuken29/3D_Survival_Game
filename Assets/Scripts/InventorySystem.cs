@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class InventorySystem : MonoBehaviour
+public class InventorySystem : Singleton<InventorySystem>
 {
-    public static InventorySystem Instance { get; set; }
-
     public GameObject inventoryScreenUI;
     public List<GameObject> slotList = new List<GameObject>();
     public List<string> itemList = new List<string>();
@@ -16,9 +16,16 @@ public class InventorySystem : MonoBehaviour
     private GameObject whatSlotToEquip;
 
     public bool isOpen;
+    
+    //Pickup Popup
 
+    public GameObject pickupAlert;
+    public TextMeshProUGUI pickupName;
+    public Image pickupImage;
 
-    private void Awake()
+    public GameObject ItemInfoUI;
+
+    /*private void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -28,7 +35,7 @@ public class InventorySystem : MonoBehaviour
         {
             Instance = this;
         }
-    }
+    }*/
 
 
     void Start()
@@ -61,7 +68,11 @@ public class InventorySystem : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.I) && isOpen)
         {
             inventoryScreenUI.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
+            if (!CraftingSystem.Instance.isOpen)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+
             isOpen = false;
         }
     }
@@ -73,6 +84,24 @@ public class InventorySystem : MonoBehaviour
             whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquip.transform);
         itemList.Add(itemName);
+        
+        TriggerPickupPopup(itemName, itemToAdd.GetComponent<Image>().sprite);
+        
+        ReCalculateList();
+        CraftingSystem.Instance.RefreshNeededItems();
+    }
+    
+    void TriggerPickupPopup(string itemName, Sprite itemSprite)
+    {
+        pickupAlert.SetActive(true);
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+        Invoke("HidePickUpPopup",1f);
+    }
+
+    void HidePickUpPopup()
+    {
+        pickupAlert.SetActive(false);
     }
 
     private GameObject FindNextEmptySlot()
@@ -106,6 +135,46 @@ public class InventorySystem : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+
+    public void RemoveItem(string nameToRemove, int amountToRemove)
+    {
+        int counter = amountToRemove;
+
+        for (var i = slotList.Count - 1; i >= 0; i--)
+        {
+            if (slotList[i].transform.childCount > 0)
+            {
+                if (slotList[i].transform.GetChild(0).name == nameToRemove + "(Clone)" && counter != 0)
+                {
+                    DestroyImmediate(slotList[i].transform.GetChild(0).gameObject);
+
+                    counter -= 1;
+                }
+            }
+        }
+        
+        ReCalculateList();
+        CraftingSystem.Instance.RefreshNeededItems();
+    }
+    
+
+    public void ReCalculateList()
+    {
+        itemList.Clear();
+        foreach (GameObject slot in slotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                string name = slot.transform.GetChild(0).name; // Stone (Clone)
+
+                string str2 = "(Clone)";
+
+                string result = name.Replace(str2, "");
+
+                itemList.Add(result);
+            }
         }
     }
 }
