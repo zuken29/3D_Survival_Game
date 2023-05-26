@@ -16,7 +16,7 @@ public class InventorySystem : Singleton<InventorySystem>
     private GameObject whatSlotToEquip;
 
     public bool isOpen;
-    
+
     //Pickup Popup
 
     public GameObject pickupAlert;
@@ -42,6 +42,8 @@ public class InventorySystem : Singleton<InventorySystem>
     {
         isOpen = false;
         PopulateSlotList();
+
+        Cursor.visible = false;
     }
 
     private void PopulateSlotList()
@@ -58,11 +60,15 @@ public class InventorySystem : Singleton<InventorySystem>
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I) && !isOpen)
+        if (Input.GetKeyDown(KeyCode.I) && !isOpen && !ConstructionManager.Instance.inConstructionMode)
         {
-            Debug.Log("i is pressed");
             inventoryScreenUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            SelectionManager.Instance.DisableSelection();
+            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
+
             isOpen = true;
         }
         else if (Input.GetKeyDown(KeyCode.I) && isOpen)
@@ -71,6 +77,10 @@ public class InventorySystem : Singleton<InventorySystem>
             if (!CraftingSystem.Instance.isOpen)
             {
                 Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = true;
+
+                SelectionManager.Instance.EnableSelection();
+                SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
             }
 
             isOpen = false;
@@ -79,24 +89,28 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public void AddToInventory(string itemName)
     {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+
         whatSlotToEquip = FindNextEmptySlot();
         itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName),
             whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
         itemToAdd.transform.SetParent(whatSlotToEquip.transform);
         itemList.Add(itemName);
-        
+
         TriggerPickupPopup(itemName, itemToAdd.GetComponent<Image>().sprite);
-        
+
         ReCalculateList();
         CraftingSystem.Instance.RefreshNeededItems();
+
+        SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
     }
-    
+
     void TriggerPickupPopup(string itemName, Sprite itemSprite)
     {
         pickupAlert.SetActive(true);
         pickupName.text = itemName;
         pickupImage.sprite = itemSprite;
-        Invoke("HidePickUpPopup",1f);
+        Invoke("HidePickUpPopup", 1f);
     }
 
     void HidePickUpPopup()
@@ -117,18 +131,18 @@ public class InventorySystem : Singleton<InventorySystem>
         return new GameObject();
     }
 
-    public bool CheckIsFull()
+    public bool CheckSlotAvailable(int emptyNeeded)
     {
-        int counter = 0;
+        int emptySlot = 0;
         foreach (GameObject slot in slotList)
         {
-            if (slot.transform.childCount > 0)
+            if (slot.transform.childCount <= 0)
             {
-                counter += 1;
+                emptySlot += 1;
             }
         }
 
-        if (counter == 21)
+        if (emptySlot >= emptyNeeded)
         {
             return true;
         }
@@ -154,11 +168,11 @@ public class InventorySystem : Singleton<InventorySystem>
                 }
             }
         }
-        
+
         ReCalculateList();
         CraftingSystem.Instance.RefreshNeededItems();
     }
-    
+
 
     public void ReCalculateList()
     {

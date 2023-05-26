@@ -6,6 +6,14 @@ TagManager:
   tags:
   - Slot
   - Pickable
+  - QuickSlot
+  - activeConstructable
+  - Ground
+  - Tree
+  - ghost
+  - placedFoundation
+  - wallGhost
+  - placedWall
   layers:
   - Default
   - TransparentFX
@@ -14,7 +22,7 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
+  - Equipable
   - 
   - 
   - 

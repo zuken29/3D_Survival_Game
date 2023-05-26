@@ -55,24 +55,24 @@ public class PlayerState : Singleton<PlayerState>
             currentCalories -= 1;
         }
         
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             currentHealth -= 10;
         }
     }
 
-    public void setHealth(float p0)
+    public void setHealth(float newHealth)      
     {
-        currentHealth = maxHealth;
+        currentHealth = newHealth;
     }
 
-    public void setCalories(float p0)
+    public void setCalories(float newCalories)
     {
-        currentCalories = maxCalories;
+        currentCalories = newCalories;
     }
 
-    public void setHydration(float maxHydration)
+    public void setHydration(float newHydration)
     {
-        currentHydrationPercent = maxHydrationPercent;
+        currentHydrationPercent = newHydration;
     }
 }

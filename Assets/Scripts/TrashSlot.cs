@@ -49,7 +49,7 @@ public class TrashSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoi
     {
         imageComponent = transform.Find("background").GetComponent<Image>();
  
-        textToModify = trashAlertUI.transform.Find("Text").GetComponent<Text>();
+        textToModify = trashAlertUI.transform.Find("Question").GetComponent<Text>();
  
         YesBTN = trashAlertUI.transform.Find("yes").GetComponent<Button>();
         YesBTN.onClick.AddListener(delegate { DeleteItem(); });

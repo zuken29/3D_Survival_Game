@@ -9,13 +9,18 @@ public class SelectionManager : Singleton<SelectionManager>
     public bool onTarget;
 
     public GameObject selectedObject;
-    
+
     public GameObject interaction_Info_UI;
     Text interaction_text;
 
     public Image centerDotImage;
     public Image handIcon;
- 
+
+    public bool handIsVisible;
+
+    public GameObject selectedTree;
+    public GameObject chopHolder;
+
     private void Start()
     {
         onTarget = false;
@@ -31,7 +36,25 @@ public class SelectionManager : Singleton<SelectionManager>
             var selectionTransform = hit.transform;
 
             InteractableObject interactable = selectionTransform.GetComponent<InteractableObject>();
- 
+
+            ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
+
+            if (choppableTree && choppableTree.playerInRange)
+            {
+                choppableTree.canBeChopped = true;
+                selectedTree = choppableTree.gameObject;
+                chopHolder.gameObject.SetActive(true);
+            }
+            else
+            {
+                if (selectedTree != null)
+                {
+                    selectedTree.gameObject.GetComponent<ChoppableTree>().canBeChopped = false;
+                    selectedTree = null;
+                    chopHolder.gameObject.SetActive(false);
+                }
+            }
+            
             if (interactable && interactable.playerInRange)
             {
                 onTarget = true;
@@ -42,11 +65,15 @@ public class SelectionManager : Singleton<SelectionManager>
                 {
                     centerDotImage.gameObject.SetActive(false);
                     handIcon.gameObject.SetActive(true);
+
+                    handIsVisible = true;
                 }
                 else //if there is a hit, but without an Interactable Script
                 {
                     centerDotImage.gameObject.SetActive(true);
                     handIcon.gameObject.SetActive(false);
+
+                    handIsVisible = false;
                 }
             }
             else // if there is no hit at all
@@ -55,6 +82,8 @@ public class SelectionManager : Singleton<SelectionManager>
                 interaction_Info_UI.SetActive(false);
                 centerDotImage.gameObject.SetActive(true);
                 handIcon.gameObject.SetActive(false);
+
+                handIsVisible = false;
             }
         }
         else
@@ -63,6 +92,24 @@ public class SelectionManager : Singleton<SelectionManager>
             interaction_Info_UI.SetActive(false);
             centerDotImage.gameObject.SetActive(true);
             handIcon.gameObject.SetActive(false);
+
+            handIsVisible = false;
         }
+    }
+
+    public void DisableSelection()
+    {
+        handIcon.enabled = false;
+        centerDotImage.enabled = false;
+        interaction_Info_UI.SetActive(false);
+
+        selectedObject = null;
+    }
+
+    public void EnableSelection()
+    {
+        handIcon.enabled = true;
+        centerDotImage.enabled = true;
+        interaction_Info_UI.SetActive(true);
     }
 }
