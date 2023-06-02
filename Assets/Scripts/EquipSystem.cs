@@ -168,7 +168,7 @@ public class EquipSystem : Singleton<EquipSystem>
     }
 
 
-    private GameObject FindNextEmptySlot()
+    public GameObject FindNextEmptySlot()
     {
         foreach (GameObject slot in quickSlotsList)
         {

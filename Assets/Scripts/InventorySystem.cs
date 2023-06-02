@@ -25,6 +25,8 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public GameObject ItemInfoUI;
 
+    public List<string> itemsPickedup;
+
     /*private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -89,7 +91,10 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public void AddToInventory(string itemName)
     {
-        SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+        if (SaveManager.Instance.isLoading == false)
+        {
+            SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+        }
 
         whatSlotToEquip = FindNextEmptySlot();
         itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName),
@@ -101,8 +106,7 @@ public class InventorySystem : Singleton<InventorySystem>
 
         ReCalculateList();
         CraftingSystem.Instance.RefreshNeededItems();
-
-        SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
+        
     }
 
     void TriggerPickupPopup(string itemName, Sprite itemSprite)
