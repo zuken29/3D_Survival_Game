@@ -225,12 +225,16 @@ public class ConstructionManager : Singleton<ConstructionManager>
 
         // Enabling back the solider collider that we disabled earlier
         itemToBeConstructed.GetComponent<Constructable>().solidCollider.enabled = true;
+        itemToBeConstructed.GetComponent<Rigidbody>().useGravity = true;
+        itemToBeConstructed.GetComponent<Rigidbody>().isKinematic = false;
+
+      
 
 
         if (itemToBeConstructed.name == "FoundationModel")
         {
             // Making the Ghost Children to no longer be children of this item
-            itemToBeConstructed.GetComponent<Constructable>().ExtractGhostMembers();
+            itemToBeConstructed.GetComponent<Constructable>().Invoke("ExtractGhostMembers",0.5f);
             itemToBeConstructed.tag = "placedFoundation";
             //Adding all the ghosts of this item into the manager's ghost bank
             GetAllGhosts(itemToBeConstructed);
@@ -254,13 +258,15 @@ public class ConstructionManager : Singleton<ConstructionManager>
         itemToBeConstructed.transform.SetParent(transform.parent.transform.parent, true);
 
         // Making the Ghost Children to no longer be children of this item
-        itemToBeConstructed.GetComponent<Constructable>().ExtractGhostMembers();
+        itemToBeConstructed.GetComponent<Constructable>().Invoke("ExtractGhostMembers",0.5f);
         // Setting the default color/material
         itemToBeConstructed.GetComponent<Constructable>().SetDefaultColor();
         itemToBeConstructed.tag = "placedFoundation";
         itemToBeConstructed.GetComponent<Constructable>().enabled = false;
         // Enabling back the solider collider that we disabled earlier
         itemToBeConstructed.GetComponent<Constructable>().solidCollider.enabled = true;
+        itemToBeConstructed.GetComponent<Rigidbody>().useGravity = true;
+        itemToBeConstructed.GetComponent<Rigidbody>().isKinematic = false;
 
         //Adding all the ghosts of this item into the manager's ghost bank
         GetAllGhosts(itemToBeConstructed);
@@ -269,6 +275,9 @@ public class ConstructionManager : Singleton<ConstructionManager>
         itemToBeConstructed = null;
 
         inConstructionMode = false;
+        
+        
+
     }
 
     void DestroyItem(GameObject item)

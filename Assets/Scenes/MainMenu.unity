@@ -2021,7 +2021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab802adbc337954695dbc25bb35deb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isSavingToJson: 1
+  isSavingToJson: 0
   isLoading: 0
   loadingScreen: {fileID: 1048195462}
 --- !u!4 &805952186

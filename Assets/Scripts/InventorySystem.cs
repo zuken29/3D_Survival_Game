@@ -27,19 +27,6 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public List<string> itemsPickedup;
 
-    /*private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }*/
-
-
     void Start()
     {
         isOpen = false;
@@ -65,6 +52,9 @@ public class InventorySystem : Singleton<InventorySystem>
         if (Input.GetKeyDown(KeyCode.I) && !isOpen && !ConstructionManager.Instance.inConstructionMode)
         {
             inventoryScreenUI.SetActive(true);
+
+            inventoryScreenUI.GetComponentInParent<Canvas>().sortingOrder = MenuManager.Instance.SetAsFront();
+
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
@@ -91,10 +81,10 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public void AddToInventory(string itemName)
     {
-        if (SaveManager.Instance.isLoading == false)
+        /*if (SaveManager.Instance.isLoading == false)
         {
             SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
-        }
+        }*/
 
         whatSlotToEquip = FindNextEmptySlot();
         itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName),
@@ -107,6 +97,8 @@ public class InventorySystem : Singleton<InventorySystem>
         ReCalculateList();
         CraftingSystem.Instance.RefreshNeededItems();
         
+        QuestManager.Instance.RefreshTrackerList();
+
     }
 
     void TriggerPickupPopup(string itemName, Sprite itemSprite)
@@ -175,6 +167,8 @@ public class InventorySystem : Singleton<InventorySystem>
 
         ReCalculateList();
         CraftingSystem.Instance.RefreshNeededItems();
+        
+        QuestManager.Instance.RefreshTrackerList();
     }
 
 
@@ -194,5 +188,19 @@ public class InventorySystem : Singleton<InventorySystem>
                 itemList.Add(result);
             }
         }
+    }
+
+    public int CheckItemAmount(string name)
+    {
+        int itemCounter = 0;
+
+        foreach (string item in itemList)
+        {
+            if (item == name)
+            {
+                itemCounter++;
+            }
+        }
+        return itemCounter;
     }
 }

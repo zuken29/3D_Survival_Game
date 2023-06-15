@@ -46,19 +46,22 @@ public class Constructable : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ground") && gameObject.CompareTag("activeConstructable"))
+        if (gameObject.CompareTag("activeConstructable"))
         {
-            isGrounded = true;
-        }
+            if (other.CompareTag("Ground"))
+            {
+                isGrounded = true;
+            }
 
-        if (other.CompareTag("Tree") || other.CompareTag("Pickable") && gameObject.CompareTag("activeConstructable"))
-        {
-            isOverlappingItems = true;
-        }
+            if (other.CompareTag("Tree") || other.CompareTag("Pickable"))
+            {
+                isOverlappingItems = true;
+            }
 
-        if (other.gameObject.CompareTag("ghost") && gameObject.CompareTag("activeConstructable"))
-        {
-            detectedGhostMemeber = true;
+            if (other.gameObject.CompareTag("ghost"))
+            {
+                detectedGhostMemeber = true;
+            }
         }
     }
 

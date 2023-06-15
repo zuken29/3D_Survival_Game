@@ -39,6 +39,31 @@ public class SelectionManager : Singleton<SelectionManager>
 
             ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
 
+            NPC npc = selectionTransform.GetComponent<NPC>();
+
+            if (npc && npc.playerInRange)
+            {
+                interaction_text.text = "Talk";
+                interaction_Info_UI.SetActive(true);
+
+                if (Input.GetMouseButtonDown(0) && npc.isTalkingWithPlayer == false)
+                {
+                    npc.StartConversation();
+                }
+
+                if (DialogSystem.Instance.dialogUIActive)
+                {
+                    interaction_Info_UI.SetActive(false);
+                    centerDotImage.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                interaction_text.text = "";
+                interaction_Info_UI.SetActive(false);
+            }
+            
+            
             if (choppableTree && choppableTree.playerInRange)
             {
                 choppableTree.canBeChopped = true;
@@ -68,7 +93,7 @@ public class SelectionManager : Singleton<SelectionManager>
 
                     handIsVisible = true;
                 }
-                else //if there is a hit, but without an Interactable Script
+                else 
                 {
                     centerDotImage.gameObject.SetActive(true);
                     handIcon.gameObject.SetActive(false);
@@ -76,17 +101,17 @@ public class SelectionManager : Singleton<SelectionManager>
                     handIsVisible = false;
                 }
             }
-            else // if there is no hit at all
+            else //if there is a hit, but without an Interactable Script
             {
                 onTarget = false;
-                interaction_Info_UI.SetActive(false);
+                //interaction_Info_UI.SetActive(false);
                 centerDotImage.gameObject.SetActive(true);
                 handIcon.gameObject.SetActive(false);
 
                 handIsVisible = false;
             }
         }
-        else
+        else // if there is no hit at all
         {
             onTarget = false;
             interaction_Info_UI.SetActive(false);
