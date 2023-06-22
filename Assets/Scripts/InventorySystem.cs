@@ -81,10 +81,10 @@ public class InventorySystem : Singleton<InventorySystem>
 
     public void AddToInventory(string itemName)
     {
-        /*if (SaveManager.Instance.isLoading == false)
+        if (SaveManager.Instance.isLoading == false)
         {
             SoundManager.Instance.PlaySound(SoundManager.Instance.pickupItemSound);
-        }*/
+        }
 
         whatSlotToEquip = FindNextEmptySlot();
         itemToAdd = (GameObject)Instantiate(Resources.Load<GameObject>(itemName),

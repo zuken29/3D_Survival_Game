@@ -190,7 +190,7 @@ public class ConstructionManager : Singleton<ConstructionManager>
             }
         }
 
-        // Right Mouse Click to Cancel                      //TODO - don't destroy the ui item until you actually placed it.
+        // Press X to Cancel                      //TODO - don't destroy the ui item until you actually placed it.
         if (Input.GetKeyDown(KeyCode.X))
         {
             itemToBeDestroyed.SetActive(true);
@@ -234,7 +234,7 @@ public class ConstructionManager : Singleton<ConstructionManager>
         if (itemToBeConstructed.name == "FoundationModel")
         {
             // Making the Ghost Children to no longer be children of this item
-            itemToBeConstructed.GetComponent<Constructable>().Invoke("ExtractGhostMembers",0.5f);
+            itemToBeConstructed.GetComponent<Constructable>().Invoke("ExtractGhostMembers",1f);
             itemToBeConstructed.tag = "placedFoundation";
             //Adding all the ghosts of this item into the manager's ghost bank
             GetAllGhosts(itemToBeConstructed);
