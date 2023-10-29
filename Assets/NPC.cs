@@ -53,6 +53,7 @@ public class NPC : MonoBehaviour
             currentActiveQuest = quests[activeQuestIndex]; // 0 at start
             StartQuestInitialDialog();
             currentDialog = 0;
+            
         }
         else // Interacting with the NPC after the first time
         {
